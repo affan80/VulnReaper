@@ -1,0 +1,1 @@
+# VMS Backend\n\nStart with `npm install` then `npm run dev` (nodemon) or `npm start` after building.\n
