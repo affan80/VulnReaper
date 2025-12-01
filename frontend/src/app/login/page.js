@@ -26,7 +26,7 @@ export default function Login() {
         // Store the token in localStorage
         localStorage.setItem('token', data.token);
         // Redirect to home page
-        window.location.href = '/';
+        window.location.href = '/home_page';
       } else {
         setError(data.message || 'Login failed');
       }
