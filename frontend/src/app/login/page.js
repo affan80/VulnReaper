@@ -1,11 +1,13 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,7 +28,7 @@ export default function Login() {
         // Store the token in localStorage
         localStorage.setItem('token', data.token);
         // Redirect to home page
-        window.location.href = '/home_page';
+        router.push('/home_page');
       } else {
         setError(data.message || 'Login failed');
       }

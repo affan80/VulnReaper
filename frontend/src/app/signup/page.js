@@ -111,9 +111,9 @@ export default function Signup() {
           </div>
 
           <div className="text-center">
-            <a href="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
+            <Link href="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
               Already have an account? Sign in
-            </a>
+            </Link>
           </div>
         </form>
       </div>
