@@ -1,30 +1,30 @@
 'use client'
-import { Home, Flag, FileText, Settings } from "lucide-react";
+import { Home, Flag, FileText, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function Sidebar() {
   const router = useRouter();
 
   const menu = [
-    { 
-      name: "Dashboard", 
-      icon: <Home size={20} />, 
-      action: () => router.push("/") 
+    {
+      name: "Dashboard",
+      icon: <Home size={20} />,
+      action: () => router.push("/home_page")
     },
-    { 
-      name: "Vulnerabilities", 
-      icon: <Flag size={20} />, 
-      action: () => router.push("/VulnerabilitiesTable") 
+    {
+      name: "Vulnerabilities",
+      icon: <Flag size={20} />,
+      action: () => router.push("/VulnerabilitiesTable")
     },
-    { 
-      name: "Reports", 
-      icon: <FileText size={20} />, 
+    {
+      name: "Scan",
+      icon: <Search size={20} />,
+      action: () => router.push("/Scan")
+    },
+    {
+      name: "Reports",
+      icon: <FileText size={20} />,
       action: () => router.push("/Reports")   // ✅ CORRECT
-    },
-    { 
-      name: "Settings", 
-      icon: <Settings size={20} />, 
-      action: () => router.push("/Settings") 
     },
   ];
 

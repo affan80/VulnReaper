@@ -1,28 +1,14 @@
+// src/routes/vulnerabilityRoutes.js
 import express from "express";
-import { protect } from "../middleware/auth.js";
-import {
-  createVuln,
-  createVulnsBulk,
-  getVulns,
-  getVulnById,
-  updateVuln,
-  updateVulnStatus,
-  deleteVuln,
-  deleteManyVulns
-} from "../controllers/vulnController.js";
-
 const router = express.Router();
+import vulnController from "../controllers/vulnController.js";
+import { authenticate } from "../middleware/auth.js";
 
-router.post("/", protect, createVuln);
-router.post("/bulk", protect, createVulnsBulk);
-
-router.get("/", protect, getVulns);
-router.get("/:id", protect, getVulnById);
-
-router.put("/:id", protect, updateVuln);
-router.patch("/:id/status", protect, updateVulnStatus);
-
-router.delete("/:id", protect, deleteVuln);
-router.delete("/", protect, deleteManyVulns);
+// CRUD
+router.post("/", authenticate, vulnController.create);
+router.get("/", authenticate, vulnController.getAll);
+router.get("/:id", authenticate, vulnController.getOne);
+router.put("/:id", authenticate, vulnController.update);
+router.delete("/:id", authenticate, vulnController.delete);
 
 export default router;
