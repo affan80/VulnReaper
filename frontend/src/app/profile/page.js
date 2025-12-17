@@ -65,10 +65,7 @@ export default function ProfilePage() {
         updateData.newPassword = formData.newPassword;
       }
 
-      const response = await API.request('/auth/profile', {
-        method: 'PUT',
-        body: JSON.stringify(updateData),
-      });
+      const response = await API.updateProfile(updateData);
 
       setUser(response.user);
       setEditing(false);

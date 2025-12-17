@@ -147,6 +147,14 @@ class API {
     document.body.removeChild(a);
   }
 
+  // Profile endpoints
+  async updateProfile(data) {
+    return this.request('/auth/profile', {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
   // Activity endpoints
   async getActivities() {
     return this.request('/activity');
