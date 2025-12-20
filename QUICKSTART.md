@@ -13,7 +13,18 @@ brew services start mongodb-community  # macOS
 sudo systemctl start mongod            # Linux
 ```
 
-### Step 2: Start Backend
+### Step 2: Easy Start (Recommended)
+From the root directory, you can start both servers at once:
+```bash
+# Install dependencies first (if not already done)
+npm run install:all
+
+# Start both servers
+npm run dev
+```
+
+### Manual Start (Alternative)
+#### Start Backend
 ```bash
 cd backend
 npm start
@@ -21,11 +32,11 @@ npm start
 
 You should see:
 ```
-Server running on port 5001
+Server running on port 5002
 MongoDB connected
 ```
 
-### Step 3: Start Frontend
+#### Start Frontend
 Open a new terminal:
 ```bash
 cd frontend
@@ -90,9 +101,9 @@ sudo apt-get install nmap  # Ubuntu/Debian
 
 ### Backend won't start
 - **Error**: `EADDRINUSE`
-  - Solution: Kill process on port 5001
+  - Solution: Kill process on port 5002
   ```bash
-  lsof -ti:5001 | xargs kill -9
+  lsof -ti:5002 | xargs kill -9
   ```
 
 - **Error**: MongoDB connection failed
@@ -109,7 +120,7 @@ sudo apt-get install nmap  # Ubuntu/Debian
   ```
 
 ### API calls failing
-- Check that backend is running on port 5001
+- Check that backend is running on port 5002
 - Check `.env.local` in frontend has correct API URL
 - Check browser console for CORS errors
 
@@ -127,7 +138,7 @@ Create your own account via the signup page. There are no default credentials.
 ### Change API Port (Backend)
 Edit `backend/.env`:
 ```env
-PORT=5002  # Change from 5001 to 5002
+PORT=5002  # Default port
 ```
 
 Then update `frontend/.env.local`:

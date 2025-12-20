@@ -53,6 +53,11 @@ export default function Activity() {
         handleAuthError(error);
         return;
       }
+      // Handle rate limiting errors
+      else if (error.message.includes('Too many requests')) {
+        alert('Too many requests. Please wait a moment and try again.');
+        return;
+      }
       alert('Failed to delete activity');
     }
   };
@@ -70,6 +75,14 @@ export default function Activity() {
       // Handle authentication errors
       if (error.message.includes('Invalid or expired token') || error.message.includes('Session expired')) {
         handleAuthError(error);
+      }
+      // Handle rate limiting errors
+      else if (error.message.includes('Too many requests')) {
+        console.warn('Rate limit exceeded for activities API.');
+      }
+      // Handle connection errors
+      else if (error.message.includes('Unable to connect to the server')) {
+        console.error('Connection error:', error.message);
       }
     } finally {
       setLoading(false);

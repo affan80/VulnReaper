@@ -42,6 +42,14 @@ export default function Vulnerabilities() {
       if (error.message.includes('Invalid or expired token') || error.message.includes('Session expired')) {
         handleAuthError(error);
       }
+      // Handle rate limiting errors
+      else if (error.message.includes('Too many requests')) {
+        console.warn('Rate limit exceeded for vulnerabilities API.');
+      }
+      // Handle connection errors
+      else if (error.message.includes('Unable to connect to the server')) {
+        console.error('Connection error:', error.message);
+      }
     } finally {
       setLoading(false);
     }

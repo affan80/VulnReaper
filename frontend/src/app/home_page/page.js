@@ -27,14 +27,16 @@ export default function Dashboard() {
   const [vulnerabilities, setVulnerabilities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [lastRefresh, setLastRefresh] = useState(0);
+  const REFRESH_COOLDOWN = 5000; // 5 seconds cooldown
 
   useEffect(() => {
     fetchDashboardData();
     
-    // Auto-refresh every 30 seconds
+    // Auto-refresh every 2 minutes (reduced from 30 seconds to prevent rate limiting)
     const interval = setInterval(() => {
       fetchDashboardData(true);
-    }, 30000);
+    }, 120000);
 
     return () => clearInterval(interval);
   }, []);
@@ -60,6 +62,15 @@ export default function Dashboard() {
       if (error.message.includes('Invalid or expired token') || error.message.includes('Session expired')) {
         handleAuthError(error);
       }
+      // Handle rate limiting errors
+      else if (error.message.includes('Too many requests')) {
+        // Don't show alert for rate limiting to avoid spamming the user
+        console.warn('Rate limit exceeded. Please wait before refreshing again.');
+      }
+      // Handle connection errors
+      else if (error.message.includes('Unable to connect to the server')) {
+        console.error('Connection error:', error.message);
+      }
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -67,6 +78,12 @@ export default function Dashboard() {
   };
 
   const handleRefresh = () => {
+    const now = Date.now();
+    if (now - lastRefresh < REFRESH_COOLDOWN) {
+      console.warn('Refresh cooldown active. Please wait before refreshing again.');
+      return;
+    }
+    setLastRefresh(now);
     fetchDashboardData(true);
   };
 

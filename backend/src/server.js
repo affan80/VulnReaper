@@ -17,6 +17,7 @@ import dashboardRoutes from "./routes/dashboardRoutes.js";
 import activityRoutes from "./routes/activityRoutes.js";
 import pdfRoutes from "./routes/pdfRoutes.js";
 import assetRoutes from "./routes/assetRoutes.js";
+import healthRoutes from "./routes/healthRoutes.js";
 
 // Jobs Queue initialization
 // import "./jobs/queue.js";
@@ -40,6 +41,7 @@ app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/activity", activityRoutes);
 app.use("/api/pdf", pdfRoutes);
 app.use("/api/assets", assetRoutes);
+app.use("/api/health", healthRoutes);
 
 // Error Handler
 app.use(errorHandler);

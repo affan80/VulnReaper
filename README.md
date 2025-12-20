@@ -19,11 +19,35 @@ VulnReaper has three main components:
 
 ## Quick Start
 
-1. Install Node.js and MongoDB
-2. Open two terminal windows
-3. In the first terminal, navigate to `backend` folder and run `npm start`
-4. In the second terminal, navigate to `frontend` folder and run `npm run dev`
+1. Install Node.js (version 16 or higher) and MongoDB
+2. Install dependencies:
+   ```
+   # In the root directory
+   npm run install:all
+   ```
+3. Configure environment variables:
+   - Copy `.env.example` to `.env` in the `backend` folder
+   - Update the MongoDB connection string and other settings as needed
+4. Start both servers:
+   ```
+   # In the root directory
+   npm run dev
+   ```
 5. Visit `http://localhost:3000` in your browser
+
+## Alternative Method (Manual Start)
+
+If you prefer to start servers manually:
+1. Terminal 1: Navigate to `backend` folder and run `npm start`
+2. Terminal 2: Navigate to `frontend` folder and run `npm run dev`
+
+## Troubleshooting
+
+If you see "Connection Refused" errors:
+1. Make sure the backend server is running (port 5002)
+2. Check that MongoDB is accessible
+3. Verify the `.env` configuration in the backend folder
+4. Ensure no firewall is blocking the connection
 
 ## Who is this for?
 

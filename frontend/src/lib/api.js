@@ -1,6 +1,36 @@
 // API utility for making requests to the backend
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002/api';
 
+// Rate limiting and backoff mechanism
+const BASE_RATE_LIMIT_DELAY = 500; // 0.5 second between requests
+const MAX_BACKOFF_DELAY = 30000; // 30 seconds max backoff
+let lastRequestTime = 0;
+let backoffDelay = 0;
+
+async function rateLimit() {
+  const now = Date.now();
+  const timeSinceLastRequest = now - lastRequestTime;
+  
+  // Calculate delay needed (base delay + backoff)
+  const totalDelayNeeded = Math.max(BASE_RATE_LIMIT_DELAY, backoffDelay);
+  
+  if (timeSinceLastRequest < totalDelayNeeded) {
+    const delay = totalDelayNeeded - timeSinceLastRequest;
+    await new Promise(resolve => setTimeout(resolve, delay));
+  }
+  
+  lastRequestTime = Date.now();
+}
+
+function increaseBackoff() {
+  // Exponential backoff, capped at MAX_BACKOFF_DELAY
+  backoffDelay = Math.min(backoffDelay * 2 || 1000, MAX_BACKOFF_DELAY);
+}
+
+function resetBackoff() {
+  backoffDelay = 0;
+}
+
 class API {
   constructor() {
     this.baseURL = API_BASE_URL;
@@ -14,6 +44,9 @@ class API {
   }
 
   async request(endpoint, options = {}) {
+    // Apply rate limiting
+    await rateLimit();
+    
     const token = this.getToken();
     const headers = {
       'Content-Type': 'application/json',
@@ -31,27 +64,55 @@ class API {
 
     try {
       const response = await fetch(`${this.baseURL}${endpoint}`, config);
-      const data = await response.json();
-
-      if (!response.ok) {
-        // If we get a 401 Unauthorized error, automatically logout the user
-        if (response.status === 401) {
-          // Remove token from localStorage
-          localStorage.removeItem('token');
-          
-          // Redirect to login page if we're in the browser
-          if (typeof window !== 'undefined') {
-            window.location.href = '/login';
-          }
-          
-          throw new Error('Session expired. Please log in again.');
+      
+      // Handle rate limiting (429) errors
+      if (response.status === 429) {
+        // Increase backoff delay for future requests
+        increaseBackoff();
+        throw new Error('Too many requests. Please wait a moment and try again.');
+      }
+      
+      // If we get a 401 Unauthorized error, automatically logout the user
+      if (response.status === 401) {
+        // Remove token from localStorage
+        localStorage.removeItem('token');
+        
+        // Redirect to login page if we're in the browser
+        if (typeof window !== 'undefined') {
+          window.location.href = '/login';
         }
         
+        throw new Error('Session expired. Please log in again.');
+      }
+      
+      // Try to parse JSON, but handle cases where response is not JSON
+      let data;
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        data = await response.json();
+      } else {
+        // If not JSON, try to get text
+        const text = await response.text();
+        if (!response.ok) {
+          throw new Error(text || 'Request failed');
+        }
+        // If it's OK but not JSON, return the text
+        data = { success: true, data: text };
+      }
+
+      if (!response.ok) {
         throw new Error(data.message || data.error || 'Request failed');
       }
 
+      // Reset backoff on successful request
+      resetBackoff();
+      
       return data;
     } catch (error) {
+      // Handle network errors specifically
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        throw new Error('Unable to connect to the server. Please make sure the backend is running.');
+      }
       console.error('API Error:', error);
       throw error;
     }

@@ -83,6 +83,16 @@ export default function ScanPage() {
         handleAuthError(err);
         return;
       }
+      // Handle rate limiting errors
+      else if (err.message.includes('Too many requests')) {
+        setError('Too many requests. Please wait a moment and try again.');
+        return;
+      }
+      // Handle connection errors
+      else if (err.message.includes('Unable to connect to the server')) {
+        setError('Unable to connect to the server. Please make sure the backend is running.');
+        return;
+      }
       setError(err.message || 'Scan failed. Please try again.');
     } finally {
       setScanning(false);
