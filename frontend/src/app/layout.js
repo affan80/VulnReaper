@@ -1,6 +1,7 @@
 'use client';
 
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next";
 import { AuthProvider } from '../context/AuthContext';
 
 export default function RootLayout({ children }) {
@@ -10,6 +11,7 @@ export default function RootLayout({ children }) {
         <AuthProvider>
           {children}
         </AuthProvider>
+        <Analytics />
       </body>
     </html>
   );
