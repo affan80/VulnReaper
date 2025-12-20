@@ -45,6 +45,9 @@ app.use("/api/health", healthRoutes);
 
 // Error Handler
 app.use(errorHandler);
+app.get("/home",(req,res)=>{
+	res.send("Home Page")
+})
 
 // Start Server
 app.listen(PORT, () => {
