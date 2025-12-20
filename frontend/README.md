@@ -48,3 +48,18 @@ Visit `http://localhost:3000` in your browser to access the application.
 - `src/components/`: Reusable UI components
 - `src/context/`: State management
 - `src/lib/`: Utility functions and API clients
+
+## Deployment to Vercel
+
+1. Push your code to a Git repository (GitHub, GitLab, or Bitbucket)
+2. Create a new project on Vercel
+3. Import your repository
+4. Configure the project:
+   - Framework Preset: Next.js
+   - Root Directory: ./frontend
+   - Build Command: npm run build
+   - Output Directory: .next
+5. Add environment variables if needed
+6. Deploy!
+
+The custom 404 page will automatically be used for non-existent routes.
