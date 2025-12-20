@@ -5,9 +5,11 @@ import Sidebar from '../../components/Sidebar';
 import Header from '../../components/Header';
 import Loading from '../../components/Loading';
 import API from '../../lib/api';
+import { useAuth } from '../../context/AuthContext';
 import { Search, Filter, Plus, Edit2, Trash2, X } from 'lucide-react';
 
 export default function Vulnerabilities() {
+  const { handleAuthError } = useAuth();
   const [vulnerabilities, setVulnerabilities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -36,6 +38,10 @@ export default function Vulnerabilities() {
       setVulnerabilities(data.data || []);
     } catch (error) {
       console.error('Failed to fetch vulnerabilities:', error);
+      // Handle authentication errors
+      if (error.message.includes('Invalid or expired token') || error.message.includes('Session expired')) {
+        handleAuthError(error);
+      }
     } finally {
       setLoading(false);
     }

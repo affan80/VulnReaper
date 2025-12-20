@@ -24,6 +24,42 @@ export function AuthProvider({ children }) {
     setLoading(false);
   };
 
+  // Enhanced logout function with better error handling
+  const logout = () => {
+    localStorage.removeItem('token');
+    setUser(null);
+    router.push('/login');
+  };
+
+  // Function to check if user is authenticated
+  const isAuthenticated = () => {
+    const token = localStorage.getItem('token');
+    return !!token;
+  };
+
+  // Function to handle authentication errors
+  const handleAuthError = (error) => {
+    console.error('Authentication error:', error);
+    logout();
+  };
+
+  // Auto-logout on token expiration
+  useEffect(() => {
+    // Listen for storage events to handle logout from other tabs
+    const handleStorageChange = (e) => {
+      if (e.key === 'token' && e.newValue === null) {
+        setUser(null);
+        router.push('/login');
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, [router]);
+
   const login = async (email, password) => {
     const data = await API.login(email, password);
     localStorage.setItem('token', data.token);
@@ -38,14 +74,8 @@ export function AuthProvider({ children }) {
     return data;
   };
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    setUser(null);
-    router.push('/login');
-  };
-
   return (
-    <AuthContext.Provider value={{ user, setUser, login, register, logout, loading }}>
+    <AuthContext.Provider value={{ user, setUser, login, register, logout, loading, isAuthenticated, handleAuthError }}>
       {children}
     </AuthContext.Provider>
   );

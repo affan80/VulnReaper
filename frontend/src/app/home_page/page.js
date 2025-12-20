@@ -5,6 +5,7 @@ import Sidebar from '../../components/Sidebar';
 import Header from '../../components/Header';
 import Loading from '../../components/Loading';
 import API from '../../lib/api';
+import { useAuth } from '../../context/AuthContext';
 import { Doughnut, Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -20,6 +21,7 @@ import { Shield, Activity as ActivityIcon, FileText, AlertCircle, RefreshCw, Tre
 ChartJS.register(ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 export default function Dashboard() {
+  const { handleAuthError } = useAuth();
   const [stats, setStats] = useState(null);
   const [activities, setActivities] = useState([]);
   const [vulnerabilities, setVulnerabilities] = useState([]);
@@ -54,6 +56,10 @@ export default function Dashboard() {
       setVulnerabilities(vulnData.data?.slice(0, 5) || []);
     } catch (error) {
       console.error('Failed to fetch dashboard data:', error);
+      // Handle authentication errors
+      if (error.message.includes('Invalid or expired token') || error.message.includes('Session expired')) {
+        handleAuthError(error);
+      }
     } finally {
       setLoading(false);
       setRefreshing(false);

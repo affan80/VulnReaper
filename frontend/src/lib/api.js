@@ -34,6 +34,19 @@ class API {
       const data = await response.json();
 
       if (!response.ok) {
+        // If we get a 401 Unauthorized error, automatically logout the user
+        if (response.status === 401) {
+          // Remove token from localStorage
+          localStorage.removeItem('token');
+          
+          // Redirect to login page if we're in the browser
+          if (typeof window !== 'undefined') {
+            window.location.href = '/login';
+          }
+          
+          throw new Error('Session expired. Please log in again.');
+        }
+        
         throw new Error(data.message || data.error || 'Request failed');
       }
 

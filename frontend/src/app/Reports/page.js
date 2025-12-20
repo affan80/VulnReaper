@@ -5,6 +5,7 @@ import Sidebar from '../../components/Sidebar';
 import Header from '../../components/Header';
 import Loading from '../../components/Loading';
 import API from '../../lib/api';
+import { useAuth } from '../../context/AuthContext';
 import { Doughnut } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -17,6 +18,7 @@ import { FileText, Download, Plus, X, CheckCircle, Eye, TrendingUp, Search } fro
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 export default function Reports() {
+  const { handleAuthError } = useAuth();
   const [reports, setReports] = useState([]);
   const [vulnerabilities, setVulnerabilities] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -45,6 +47,10 @@ export default function Reports() {
       setVulnerabilities(vulnsData.data || []);
     } catch (error) {
       console.error('Failed to fetch data:', error);
+      // Handle authentication errors
+      if (error.message.includes('Invalid or expired token') || error.message.includes('Session expired')) {
+        handleAuthError(error);
+      }
     } finally {
       setLoading(false);
     }

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Sidebar from '../../components/Sidebar';
 import Header from '../../components/Header';
 import API from '../../lib/api';
+import { useAuth } from '../../context/AuthContext';
 import { Doughnut, Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -19,6 +20,7 @@ import { Play, Loader, CheckCircle, AlertCircle, Target, TrendingUp, Shield, Act
 ChartJS.register(ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 export default function ScanPage() {
+  const { handleAuthError } = useAuth();
   const [target, setTarget] = useState('');
   const [scanners, setScanners] = useState({
     nmap: false,
@@ -76,6 +78,11 @@ export default function ScanPage() {
       });
     } catch (err) {
       clearInterval(progressInterval);
+      // Handle authentication errors
+      if (err.message.includes('Invalid or expired token') || err.message.includes('Session expired')) {
+        handleAuthError(err);
+        return;
+      }
       setError(err.message || 'Scan failed. Please try again.');
     } finally {
       setScanning(false);

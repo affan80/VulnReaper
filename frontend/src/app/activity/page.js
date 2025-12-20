@@ -5,9 +5,11 @@ import Sidebar from '../../components/Sidebar';
 import Header from '../../components/Header';
 import Loading from '../../components/Loading';
 import API from '../../lib/api';
+import { useAuth } from '../../context/AuthContext';
 import { Activity as ActivityIcon, Clock, Search, Trash2, RefreshCw } from 'lucide-react';
 
 export default function Activity() {
+  const { handleAuthError } = useAuth();
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   // Search and filter states
@@ -46,6 +48,11 @@ export default function Activity() {
       setActivities(prevActivities => prevActivities.filter(activity => activity._id !== id));
     } catch (error) {
       console.error('Failed to delete activity:', error);
+      // Handle authentication errors
+      if (error.message.includes('Invalid or expired token') || error.message.includes('Session expired')) {
+        handleAuthError(error);
+        return;
+      }
       alert('Failed to delete activity');
     }
   };
@@ -60,6 +67,10 @@ export default function Activity() {
       setActivities(data.data || []);
     } catch (error) {
       console.error('Failed to fetch activities:', error);
+      // Handle authentication errors
+      if (error.message.includes('Invalid or expired token') || error.message.includes('Session expired')) {
+        handleAuthError(error);
+      }
     } finally {
       setLoading(false);
     }
