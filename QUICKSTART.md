@@ -18,6 +18,14 @@ From the root directory, you can start both servers at once:
 ```bash
 # Install dependencies first (if not already done)
 npm run install:all
+```
+
+### Step 3: Cloud Deployment (Optional)
+
+For deploying to cloud platforms like Railway:
+- See `RAILWAY_DEPLOYMENT.md` for detailed instructions
+- You'll need to set up separate projects for frontend and backend
+- Configure environment variables appropriately
 
 # Start both servers
 npm run dev
@@ -178,6 +186,10 @@ npm start
 2. Review the API endpoints section
 3. Check browser console for errors
 4. Check backend terminal for error logs
+
+## ☁️ Cloud Deployment
+
+For deploying to Railway or other cloud platforms, see [RAILWAY_DEPLOYMENT.md](./RAILWAY_DEPLOYMENT.md)
 
 ## 🎉 You're All Set!
 

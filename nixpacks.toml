@@ -1,0 +1,28 @@
+# Nixpacks configuration for Railway deployment
+# This is the default configuration that Railway will use
+
+# Setup phase - install system dependencies
+[phases.setup]
+aptPkgs = ["curl", "wget", "git"]
+
+# Install phase - install Node.js and dependencies
+[phases.install]
+cmds = [
+  "curl -fsSL https://deb.nodesource.com/setup_18.x | bash -",
+  "apt-get install -y nodejs",
+  "npm install -g npm@latest",
+  "npm install --prefix backend"
+]
+
+# Build phase
+[phases.build]
+cmds = []
+
+# Start command
+[start]
+cmd = "cd backend && npm start"
+
+# Environment variables
+[variables]
+NODE_ENV = "production"
+PORT = "5002"

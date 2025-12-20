@@ -56,3 +56,8 @@ VulnReaper is designed for cybersecurity professionals but is simple enough for 
 ## Documentation
 
 See `QUICKSTART.md` for detailed setup and usage instructions.
+
+## Deployment Options
+
+- **Local Development**: Follow the Quick Start guide above
+- **Railway Deployment**: See `RAILWAY_DEPLOYMENT.md` for deployment instructions
