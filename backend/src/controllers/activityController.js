@@ -19,4 +19,16 @@ export default {
       res.status(400).json({ success: false, error: err.message });
     }
   },
+
+  async delete(req, res) {
+    try {
+      const activity = await ActivityLog.findByIdAndDelete(req.params.id);
+      if (!activity) {
+        return res.status(404).json({ success: false, error: 'Activity not found' });
+      }
+      res.json({ success: true, message: 'Activity deleted successfully' });
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  },
 };

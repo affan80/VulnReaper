@@ -12,7 +12,7 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import { FileText, Download, Plus, X, CheckCircle, Eye, TrendingUp } from 'lucide-react';
+import { FileText, Download, Plus, X, CheckCircle, Eye, TrendingUp, Search } from 'lucide-react';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 

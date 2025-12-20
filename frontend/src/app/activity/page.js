@@ -5,7 +5,7 @@ import Sidebar from '../../components/Sidebar';
 import Header from '../../components/Header';
 import Loading from '../../components/Loading';
 import API from '../../lib/api';
-import { Activity as ActivityIcon, Clock, Search } from 'lucide-react';
+import { Activity as ActivityIcon, Clock, Search, Trash2, RefreshCw } from 'lucide-react';
 
 export default function Activity() {
   const [activities, setActivities] = useState([]);
@@ -13,6 +13,42 @@ export default function Activity() {
   // Search and filter states
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('createdAt');
+
+  // Function to convert timestamp to relative time (e.g., "2 hours ago")
+  const getTimeAgo = (timestamp) => {
+    const now = new Date();
+    const past = new Date(timestamp);
+    const diffInSeconds = Math.floor((now - past) / 1000);
+    
+    if (diffInSeconds < 60) {
+      return `${diffInSeconds} seconds ago`;
+    } else if (diffInSeconds < 3600) {
+      const minutes = Math.floor(diffInSeconds / 60);
+      return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+    } else if (diffInSeconds < 86400) {
+      const hours = Math.floor(diffInSeconds / 3600);
+      return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+    } else {
+      const days = Math.floor(diffInSeconds / 86400);
+      return `${days} day${days > 1 ? 's' : ''} ago`;
+    }
+  };
+
+  // Function to delete an activity
+  const handleDeleteActivity = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this activity?')) {
+      return;
+    }
+    
+    try {
+      await API.deleteActivity(id);
+      // Remove the deleted activity from the state
+      setActivities(prevActivities => prevActivities.filter(activity => activity._id !== id));
+    } catch (error) {
+      console.error('Failed to delete activity:', error);
+      alert('Failed to delete activity');
+    }
+  };
 
   useEffect(() => {
     fetchActivities();
@@ -59,9 +95,18 @@ export default function Activity() {
         <Header />
 
         <main className="p-8">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">Activity Log</h1>
-            <p className="text-gray-600 mt-1">Track all system activities and events</p>
+          <div className="mb-8 flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Activity Log</h1>
+              <p className="text-gray-600 mt-1">Track all system activities and events</p>
+            </div>
+            <button
+              onClick={fetchActivities}
+              className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium"
+            >
+              <RefreshCw size={18} />
+              Refresh
+            </button>
           </div>
 
           {/* Search and Sort */}
@@ -99,15 +144,26 @@ export default function Activity() {
                         <ActivityIcon size={20} className="text-indigo-600" />
                       </div>
                       <div className="flex-1">
-                        <h3 className="font-semibold text-gray-900 text-lg">{activity.action}</h3>
-                        {activity.details && (
-                          <p className="text-gray-600 mt-1">{activity.details}</p>
-                        )}
-                        <div className="flex items-center gap-2 mt-2 text-sm text-gray-500">
-                          <Clock size={16} />
-                          <span>{getTimeAgo(activity.createdAt)}</span>
-                          <span>•</span>
-                          <span>{new Date(activity.createdAt).toLocaleString()}</span>
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h3 className="font-semibold text-gray-900 text-lg">{activity.action}</h3>
+                            {activity.details && (
+                              <p className="text-gray-600 mt-1">{activity.details}</p>
+                            )}
+                            <div className="flex items-center gap-2 mt-2 text-sm text-gray-500">
+                              <Clock size={16} />
+                              <span>{getTimeAgo(activity.createdAt)}</span>
+                              <span>•</span>
+                              <span>{new Date(activity.createdAt).toLocaleString()}</span>
+                            </div>
+                          </div>
+                          <button 
+                            onClick={() => handleDeleteActivity(activity._id)}
+                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            aria-label="Delete activity"
+                          >
+                            <Trash2 size={18} />
+                          </button>
                         </div>
                       </div>
                     </div>

@@ -1,5 +1,5 @@
 // API utility for making requests to the backend
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002/api';
 
 class API {
   constructor() {
@@ -164,6 +164,12 @@ class API {
     return this.request('/activity', {
       method: 'POST',
       body: JSON.stringify(data),
+    });
+  }
+
+  async deleteActivity(id) {
+    return this.request(`/activity/${id}`, {
+      method: 'DELETE',
     });
   }
 }
