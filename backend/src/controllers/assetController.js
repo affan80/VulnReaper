@@ -1,7 +1,7 @@
 import Asset from "../models/Asset.js";
 
 export const getAssets = async (req, res) => {
-  try {
+  t y {
     const { page = 1, limit = 10, search, sort, tag, owner } = req.query;
     const q = {};
 
